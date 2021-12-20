@@ -17,6 +17,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
 
@@ -62,7 +63,7 @@ fun exoPlayerView(uri: Uri) : MyAppExoPlayer {
             val myAppExoPlayer = MyAppExoPlayer(LocalContext.current, uri)
             this.player = myAppExoPlayer.player
             LaunchedEffect(myAppExoPlayer) {
-                myAppExoPlayer.startPlaying()
+                myAppExoPlayer.startPlaying(Player.REPEAT_MODE_ONE)
             }
             return myAppExoPlayer
         }
@@ -76,7 +77,7 @@ fun PlayerCheckBox(player: MyAppExoPlayer) {
         onCheckedChange = {
             checkedState.value = it
             if (it) {
-                player.startPlaying()
+                player.startPlaying(Player.REPEAT_MODE_ONE)
             } else {
                 player.stopPlaying()
             }

@@ -2,16 +2,14 @@ package com.example.exoplayertext
 
 import android.content.Context
 import android.net.Uri
-import com.google.android.exoplayer2.ExoPlayer
+import androidx.annotation.IntDef
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.ExoTrackSelection
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.util.EventLogger
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.upstream.AssetDataSource
@@ -25,23 +23,19 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
  */
 class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
 
-    private var dataSourceFactory: DataSource.Factory? = null
     var player: ExoPlayer? = null
+
     private var trackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
+
+    private var dataSourceFactory: DataSource.Factory? = null
     private var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory? = null
     private var concatenatingMediaSource: ConcatenatingMediaSource? = null
-    private val currentMediaPlayerIndex = 0
+
+    val currentPosition: Long
+        get() = player?.currentPosition ?: 0
 
     init {
-//        val assetDataSource = AssetDataSource(context)
-//        val dataSpec = DataSpec(uri)
-//        try {
-//            assetDataSource.open(dataSpec)
-//        } catch (e: AssetDataSource.AssetDataSourceException) {
-//            e.printStackTrace()
-//        }
-
         if (dataSourceFactory == null) {
             dataSourceFactory = DefaultDataSource.Factory(context)
         }
@@ -49,38 +43,46 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
     }
 
     private fun initPlayer() {
-        if (player == null) {
-            trackSelectorParameters = ParametersBuilder(context).build()
-            val trackSelectionFactory: ExoTrackSelection.Factory = AdaptiveTrackSelection.Factory()
-            trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
-            trackSelector?.parameters = trackSelectorParameters!!
+        trackSelectorParameters = ParametersBuilder(context).build()
+        val trackSelectionFactory: ExoTrackSelection.Factory = AdaptiveTrackSelection.Factory()
+        trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
+        trackSelector?.apply {
+            parameters = trackSelectorParameters!!
             val renderersFactory: RenderersFactory =
                 DefaultRenderersFactory(context.applicationContext)
             player = ExoPlayer.Builder(context)
                 .setRenderersFactory(renderersFactory)
-                .setTrackSelector(trackSelector!!)
+                .setTrackSelector(this)
                 .build()
-            player?.playWhenReady = true
-            player?.addAnalyticsListener(EventLogger(trackSelector))
-            progressiveMediaSourceFactory = ProgressiveMediaSource.Factory(dataSourceFactory!!)
         }
+        player?.playWhenReady = true
+        player?.addAnalyticsListener(EventLogger(trackSelector))
+        progressiveMediaSourceFactory = dataSourceFactory?.let { ProgressiveMediaSource.Factory(it) }
         concatenatingMediaSource = ConcatenatingMediaSource()
     }
 
-    fun startPlaying() {
-        if (player == null) initPlayer()
-        val mediaSource: MediaSource = progressiveMediaSourceFactory!!.createMediaSource(uri)
-        player?.apply {
-            setMediaSource(mediaSource, true)
-            repeatMode = Player.REPEAT_MODE_ONE
-            prepare()
+    fun startPlaying(repeat: @Player.RepeatMode Int) {
+        if (player == null) {
+            initPlayer()
+        }
+        progressiveMediaSourceFactory?.let {
+            val mediaSource = it.createMediaSource(MediaItem.fromUri(uri))
+            player?.apply {
+                setMediaSource(mediaSource, true)
+                repeatMode = repeat
+                prepare()
+            }
         }
     }
 
-    fun addToQ(uri: Uri?) {
-        if (player == null) return
-        val mediaSource: MediaSource = progressiveMediaSourceFactory!!.createMediaSource(uri!!)
-        concatenatingMediaSource?.addMediaSource(mediaSource)
+    fun addToQ(uri: Uri) {
+        if (player == null) {
+            return
+        }
+        progressiveMediaSourceFactory?.let {
+            val mediaSource = it.createMediaSource(MediaItem.fromUri(uri))
+            concatenatingMediaSource?.addMediaSource(mediaSource)
+        }
     }
 
     fun stopPlaying() {
@@ -88,15 +90,10 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
         concatenatingMediaSource?.clear()
     }
 
-    val currentPosition: Long
-        get() = if (player != null) player!!.currentPosition else 0
-
     fun releasePlayer() {
-        if (player != null) {
-            trackSelectorParameters = trackSelector?.parameters
-            player?.release()
-            player = null
-            trackSelector = null
-        }
+        trackSelectorParameters = trackSelector?.parameters
+        player?.release()
+        player = null
+        trackSelector = null
     }
 }
