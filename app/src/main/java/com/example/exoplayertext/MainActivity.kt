@@ -27,10 +27,10 @@ class MainActivity : ComponentActivity() {
             ExoPlayerTextTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     Column {
-                        CheckablePlayerRow("Drums", "asset:///android_asset/drum.wav")
-                        CheckablePlayerRow("Bass", "asset:///android_asset/bass.wav")
-                        CheckablePlayerRow("Piano", "asset:///android_asset/piano.wav")
-                        CheckablePlayerRow("Guitar", "asset:///android_asset/guitar.wav")
+                        CheckablePlayerRow("Drums", "asset:///android_asset/StemDrums.mp3")
+                        CheckablePlayerRow("Bass", "asset:///android_asset/StemBass.mp3")
+                        CheckablePlayerRow("Rhythm", "asset:///android_asset/StemGRhythm.mp3")
+                        CheckablePlayerRow("Guitar", "asset:///android_asset/StemGSolo.mp3")
                     }
                 }
             }
