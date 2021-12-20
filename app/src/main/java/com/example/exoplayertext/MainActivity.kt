@@ -4,19 +4,20 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.Checkbox
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.exoplayertext.ui.theme.ExoPlayerTextTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Text
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
@@ -43,14 +44,17 @@ class MainActivity : ComponentActivity() {
 fun CheckablePlayerRow(label: String, path: String) {
     Row(
         modifier = Modifier
-            .wrapContentSize()
+            .wrapContentWidth()
             .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         val drumPlayer =
             exoPlayerView(Uri.parse(path))
-        Text(text = label)
-        Spacer(Modifier.size(16.dp))
+        Text(text = label,
+            color = MaterialTheme.colors.onSurface,
+            style = MaterialTheme.typography.h4,
+            modifier = Modifier.weight(1f)
+        )
         PlayerCheckBox(drumPlayer)
     }
 }
@@ -89,6 +93,7 @@ fun PlayerCheckBox(player: MyAppExoPlayer) {
 @Composable
 fun DefaultPreview() {
     ExoPlayerTextTheme {
-        exoPlayerView(Uri.parse("asset:///android_asset/guitar.wav"))
+        Surface(modifier = Modifier.fillMaxSize()) {
+        }
     }
 }
