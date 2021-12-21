@@ -75,7 +75,7 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
         }
     }
 
-    fun addToQ(uri: Uri) {
+    fun addToQueue(uri: Uri) {
         if (player == null) {
             return
         }
@@ -83,6 +83,14 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
             val mediaSource = it.createMediaSource(MediaItem.fromUri(uri))
             concatenatingMediaSource?.addMediaSource(mediaSource)
         }
+    }
+
+    fun mute() {
+        player?.volume = 0f
+    }
+
+    fun volumeUp() {
+        player?.volume = 1f
     }
 
     fun stopPlaying() {
