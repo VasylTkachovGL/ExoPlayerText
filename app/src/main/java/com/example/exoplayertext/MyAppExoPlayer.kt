@@ -2,20 +2,16 @@ package com.example.exoplayertext
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.IntDef
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
 import com.google.android.exoplayer2.trackselection.ExoTrackSelection
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.util.EventLogger
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.upstream.AssetDataSource
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.util.EventLogger
 
 /*
  * @author Tkachov Vasyl
@@ -23,7 +19,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSource
  */
 class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
 
-    var player: ExoPlayer? = null
+    private var player: ExoPlayer? = null
 
     private var trackSelector: DefaultTrackSelector? = null
     private var trackSelectorParameters: DefaultTrackSelector.Parameters? = null
