@@ -2,6 +2,7 @@ package com.example.exoplayertext
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.mutableStateOf
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -27,6 +28,8 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
     private var dataSourceFactory: DataSource.Factory? = null
     private var progressiveMediaSourceFactory: ProgressiveMediaSource.Factory? = null
     private var concatenatingMediaSource: ConcatenatingMediaSource? = null
+
+    val mutedState = mutableStateOf(true)
 
     val currentPosition: Long
         get() = player?.currentPosition ?: 0
@@ -83,10 +86,12 @@ class MyAppExoPlayer(private val context: Context, private val uri: Uri) {
 
     fun mute() {
         player?.volume = 0f
+        mutedState.value = false
     }
 
     fun volumeUp() {
         player?.volume = 1f
+        mutedState.value = true
     }
 
     fun stopPlaying() {

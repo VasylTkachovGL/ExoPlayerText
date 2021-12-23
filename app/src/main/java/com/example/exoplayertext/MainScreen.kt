@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,7 +42,7 @@ fun PlayerRow(label: String, filePath: String, viewModel: BaseViewModel) {
         modifier = Modifier
             .wrapContentWidth()
             .background(color = MaterialTheme.colors.background)
-            .padding(16.dp, 8.dp, 8.dp, 16.dp),
+            .padding(16.dp, 8.dp, 8.dp, 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -55,12 +53,9 @@ fun PlayerRow(label: String, filePath: String, viewModel: BaseViewModel) {
             modifier = Modifier
                 .weight(1f)
         )
-        val checkedState = remember { mutableStateOf(true) }
-        IconToggleButton(
-            checked = checkedState.value,
-            onCheckedChange = {
-                checkedState.value = it
-                if (it) {
+        IconButton(
+            onClick = {
+                if (viewModel.mutedState(label) == false) {
                     viewModel.onPlayerVolumeUp(label)
                 } else {
                     viewModel.onPlayerMute(label)
@@ -69,10 +64,10 @@ fun PlayerRow(label: String, filePath: String, viewModel: BaseViewModel) {
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (checkedState.value) R.drawable.ic_pause else R.drawable.ic_play
+                    id = if (viewModel.mutedState(label) == false) R.drawable.ic_pause else R.drawable.ic_play
                 ),
                 tint = MaterialTheme.colors.secondary,
-                contentDescription = if (checkedState.value) "Stop" else "Play"
+                contentDescription = if (viewModel.mutedState(label) == false) "Stop" else "Play"
             )
         }
         Spacer(modifier = Modifier.size(8.dp))
