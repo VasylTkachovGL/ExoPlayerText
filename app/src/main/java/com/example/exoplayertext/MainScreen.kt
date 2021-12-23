@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -23,6 +24,14 @@ fun MainScreen(viewModel: BaseViewModel = viewModel()) {
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.background(color = Color.Black)) {
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(
+                text = "ExoPlayer Demo", color = Color.White,
+                style = MaterialTheme.typography.h5,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.size(16.dp))
             PlayerRow("Drums", "asset:///android_asset/StemDrums.mp3", viewModel)
             PlayerRow("Bass", "asset:///android_asset/StemBass.mp3", viewModel)
             PlayerRow("Rhythm", "asset:///android_asset/StemGRhythm.mp3", viewModel)
@@ -49,7 +58,7 @@ fun PlayerRow(label: String, filePath: String, viewModel: BaseViewModel) {
         Text(
             text = label,
             color = Color.White,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .weight(1f)
         )
@@ -64,10 +73,10 @@ fun PlayerRow(label: String, filePath: String, viewModel: BaseViewModel) {
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(
-                    id = if (viewModel.mutedState(label) == false) R.drawable.ic_pause else R.drawable.ic_play
+                    id = if (viewModel.mutedState(label) == true) R.drawable.ic_pause else R.drawable.ic_play
                 ),
                 tint = MaterialTheme.colors.secondary,
-                contentDescription = if (viewModel.mutedState(label) == false) "Stop" else "Play"
+                contentDescription = if (viewModel.mutedState(label) == true) "Stop" else "Play"
             )
         }
         Spacer(modifier = Modifier.size(8.dp))

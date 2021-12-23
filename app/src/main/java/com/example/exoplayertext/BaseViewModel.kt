@@ -31,7 +31,10 @@ class BaseViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startPlaying(key: String) {
-        playerStates[key]?.startPlaying(Player.REPEAT_MODE_ONE)
+        playerStates[key]?.apply {
+            stopPlaying()
+            startPlaying(Player.REPEAT_MODE_ONE)
+        }
     }
 
     /**
